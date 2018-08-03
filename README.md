@@ -1,6 +1,7 @@
 ### Source code can be found in restapi/src/main/java
 
 ## Tech used:
+* JDK 1.8
 * Spring Boot
 * Hibernate
 * JPA
