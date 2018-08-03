@@ -9,7 +9,9 @@
 
 ## How To Run:
 1. Import project to Intellij/STS (The Project is developed under Intellij, should be able to import under STS)
-2. Run As -> Select Spring Boot App
+2. STS: Run As -> Select Spring Boot App 
+   Intellij: Run RestapiApplication 
+   
 We use H2 in memory db for persistence embedded in java process, there's no need to install external db.
 
 ## Unit Tests:
