@@ -1,0 +1,335 @@
+### GET ADVISOR MODEL REQUEST WITH DEFAULT PAGE NUMBER AND SIZE (Test)
+```
+curl -X GET -H "Content-Type: application/json" -H "Cache-Control: no-cache" http://localhost:8080/v1/advisor/test/model
+```
+### RESPONSE
+{
+    "pageNumber": 0,
+    "pageSize": 20,
+    "numberOfPages": 1,
+    "totalNumberOfElements": 3,
+    "page": [
+        {
+            "advisorId": "test",
+            "name": "test1",
+            "description": "test",
+            "cashHoldingPercentage": 10,
+            "driftPercentage": 10,
+            "modelType": "QUALIFIED",
+            "rebalanceFrequency": "MONTHLY",
+            "assetAllocations": [
+                {
+                    "symbol": "APPRL",
+                    "percentage": 50
+                },
+                {
+                    "symbol": "YAHOO",
+                    "percentage": 50
+                }
+            ],
+            "guid": 99991
+        },
+        {
+            "advisorId": "test",
+            "name": "test2",
+            "description": "test",
+            "cashHoldingPercentage": 10,
+            "driftPercentage": 10,
+            "modelType": "QUALIFIED",
+            "rebalanceFrequency": "MONTHLY",
+            "assetAllocations": [
+                {
+                    "symbol": "APPRL",
+                    "percentage": 50
+                },
+                {
+                    "symbol": "YAHOO",
+                    "percentage": 50
+                }
+            ],
+            "guid": 99992
+        },
+        {
+            "advisorId": "test",
+            "name": "test3",
+            "description": "test",
+            "cashHoldingPercentage": 10,
+            "driftPercentage": 10,
+            "modelType": "QUALIFIED",
+            "rebalanceFrequency": "MONTHLY",
+            "assetAllocations": [
+                {
+                    "symbol": "APPRL",
+                    "percentage": 50
+                },
+                {
+                    "symbol": "YAHOO",
+                    "percentage": 50
+                }
+            ],
+            "guid": 99993
+        }
+    ]
+}
+
+### GET ADVISOR MODEL REQUEST WITH CUSTOMIZED PAGE NUMBER AND SIZE (Test)
+```
+curl -X GET -H "Content-Type: application/json" -H "Cache-Control: no-cache" http://localhost:8080/v1/advisor/test/model?pageNumber=2&amp;pageSize=1
+```
+### RESPONSE
+
+{
+    "pageNumber": 2,
+    "pageSize": 1,
+    "numberOfPages": 3,
+    "totalNumberOfElements": 3,
+    "page": [
+        {
+            "advisorId": "test",
+            "name": "test3",
+            "description": "test",
+            "cashHoldingPercentage": 10,
+            "driftPercentage": 10,
+            "modelType": "QUALIFIED",
+            "rebalanceFrequency": "MONTHLY",
+            "assetAllocations": [
+                {
+                    "symbol": "APPRL",
+                    "percentage": 50
+                },
+                {
+                    "symbol": "YAHOO",
+                    "percentage": 50
+                }
+            ],
+            "guid": 99993
+        }
+    ]
+}
+
+
+### PUT ADVISOR REQUEST (test)
+```
+curl -X PUT -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d '' http://localhost:8080/v1/advisor/test
+```
+### RESPONSE
+{
+    "timestamp": "2018-08-03T21:23:45.459+0000",
+    "status": 404,
+    "error": "Not Found",
+    "message": "No message available",
+    "path": "/v1/advisor/test"
+}
+```
+
+### PUT ADVISOR REQUEST (test)
+```
+curl -X PUT -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d '' http://localhost:8080/v1/advisor/test/model
+```
+### RESPONSE
+```
+"nothing happen"
+```
+
+
+### PUT ADVISOR MODEL REQUEST with correct data(test)
+```
+curl -X PUT -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d '{
+   "name":"Example Model",
+   "description":"example model with tech stocks",
+   "cashHoldingPercentage":20,
+   "driftPercentage":5,
+   "createdOn":"2017-03-01",
+   "modelType":"TAXABLE",
+   "rebalanceFrequency":"QUARTERLY",
+   "assetAllocations":[
+      {
+         "symbol":"AAPL",
+         "percentage":30
+      },
+      {
+         "symbol":"GOOG",
+         "percentage":20
+      },
+      {
+         "symbol":"IBM",
+         "percentage":25
+      },
+      {
+         "symbol":"FB",
+         "percentage":25
+      }
+   ]
+}' "http://localhost:8080/v1/advisor/test/model"
+```
+
+### RESPONSE
+```
+{
+    "advisorId": "test",
+    "name": "Example Model",
+    "description": "example model with tech stocks",
+    "cashHoldingPercentage": 20,
+    "driftPercentage": 5,
+    "modelType": "TAXABLE",
+    "rebalanceFrequency": "QUARTERLY",
+    "assetAllocations": [
+        {
+            "symbol": "AAPL",
+            "percentage": 30
+        },
+        {
+            "symbol": "GOOG",
+            "percentage": 20
+        },
+        {
+            "symbol": "IBM",
+            "percentage": 25
+        },
+        {
+            "symbol": "FB",
+            "percentage": 25
+        }
+    ],
+    "guid": 3
+}
+```
+
+
+### PUT ADVISOR MODEL REQUEST - UPDATE (test)
+```
+curl -X PUT -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d '{
+   "name":"Example Model",
+   "description":"example model with tech stocks UPDATED",
+   "cashHoldingPercentage":20,
+   "driftPercentage":5,
+   "createdOn":"2017-03-01",
+   "modelType":"TAXABLE",
+   "rebalanceFrequency":"QUARTERLY",
+   "assetAllocations":[
+      {
+         "symbol":"AAPL",
+         "percentage":10
+      },
+      {
+         "symbol":"GOOG",
+         "percentage":40
+      },
+      {
+         "symbol":"IBM",
+         "percentage":15
+      },
+      {
+         "symbol":"FB",
+         "percentage":35
+      }
+   ]
+}' "http://localhost:8080/v1/advisor/test/model"
+```
+
+### RESPONSE
+```
+{
+    "advisorId": "test",
+    "name": "Example Model",
+    "description": "example model with tech stocks UPDATED",
+    "cashHoldingPercentage": 20,
+    "driftPercentage": 5,
+    "modelType": "TAXABLE",
+    "rebalanceFrequency": "QUARTERLY",
+    "assetAllocations": [
+        {
+            "symbol": "AAPL",
+            "percentage": 10
+        },
+        {
+            "symbol": "GOOG",
+            "percentage": 40
+        },
+        {
+            "symbol": "IBM",
+            "percentage": 15
+        },
+        {
+            "symbol": "FB",
+            "percentage": 35
+        }
+    ],
+    "guid": 3
+}
+```
+
+### PUT ADVISOR MODEL REQUEST WITH NO ADVISOR EXIST (test)
+```
+curl -X PUT -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d '{
+   "name":"Example Model",
+   "description":"example model with tech stocks UPDATED",
+   "cashHoldingPercentage":20,
+   "driftPercentage":5,
+   "createdOn":"2017-03-01",
+   "modelType":"TAXABLE",
+   "rebalanceFrequency":"QUARTERLY",
+   "assetAllocations":[
+      {
+         "symbol":"AAPL",
+         "percentage":10
+      },
+      {
+         "symbol":"GOOG",
+         "percentage":40
+      },
+      {
+         "symbol":"IBM",
+         "percentage":15
+      },
+      {
+         "symbol":"FB",
+         "percentage":35
+      }
+   ]
+}' "http://localhost:8080/v1/advisor/badtest/model"
+```
+
+### RESPONSE
+```
+{
+    "errorCode": "advisor.not.found"
+}
+```
+
+### PUT ADVISOR MODEL REQUEST WITH BAD ASSET ALLOCATIONS (test)
+```
+curl -X PUT -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d '{
+   "name":"Example Model",
+   "description":"example model with tech stocks UPDATED",
+   "cashHoldingPercentage":20,
+   "driftPercentage":5,
+   "createdOn":"2017-03-01",
+   "modelType":"TAXABLE",
+   "rebalanceFrequency":"QUARTERLY",
+   "assetAllocations":[
+      {
+         "symbol":"AAPL",
+         "percentage":50
+      },
+      {
+         "symbol":"GOOG",
+         "percentage":40
+      },
+      {
+         "symbol":"IBM",
+         "percentage":15
+      },
+      {
+         "symbol":"FB",
+         "percentage":35
+      }
+   ]
+}' "http://localhost:8080/v1/advisor/badtest/model"
+```
+
+### RESPONSE
+```
+{
+    "errorCode": "allocation.percentage.total.invalid"
+}
