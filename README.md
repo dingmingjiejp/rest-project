@@ -1,46 +1,44 @@
-# Create a REST API from a RAML spec
+### Source code can be found in restapi/src/main/java
 
-Your task is to create a REST API the implements the end points available in the
-provided RAML specification.
+## Tech used:
+* Spring Boot
+* Hibernate
+* JPA
+* Maven
+* H2
 
-Please complete **any** number of the steps below within **5 days** of us
-sending you this document. You may put in as many hours as you wish, but we
-recommend a maximum of around 5 hours. Use any framework and languages you
-would like (Java encouraged) to complete the task.  Update
-your forked repository with your solution and a README.md with any steps needed to run it.
+## How To Run:
+1. Import project to Intellij/STS (The Project is developed under Intellij, should be able to import under STS)
+2. STS: Run As -> Select Spring Boot App 
+   Intellij: Run RestapiApplication 
+   
+We use H2 in memory db for persistence embedded in java process, there's no need to install external db.
 
-We are looking for code quality and innovation/thoughtfulness.
+## Unit Tests:
+Created JUnit Test class for the service layers.
+Test code can be found in restapi/src/test/
 
-### Part I: Get it
+Test Case:
+* save a new model with Advisor existed
+* save a new model with Advisor not existed
+* save a new model with Allocation Percentage Total Invalid
+* update a exsiting model
+* paged search models in 1st page
+* paged search models in 2nd page(last page)
+* paged search models with all data
 
-Fork this repository.
 
-Follow the instructions in the `api-docs` directory to view the RAML specification.  The
-RAML specification defines an endpoint /v1/advisor/{advisorId}/model and the json schema
-for a portfolio model.  A portfolio model is a way for an advisor to specify a group of
-asset allocations and rules to manage a portfolio,
-see <http://www.investopedia.com/terms/p/portfoliomanagement.asp>.
 
-Create a REST API application that allows a user to add portfolio models for an advisor
-and retrieve a list of portfolio models for an advisor.
+## Integrition Tests:
+Used curl/postman to send restful request and verified the reponse.
+Test commands and responses could be found in restapi/it
 
-There should be some persistent store backing the REST API to keep all the models. The
-choice is yours in what to use.
+test case
+* GET ADVISOR MODEL REQUEST with default page number and size
+* GET ADVISOR MODEL REQUEST with customized page number and size
+* PUT ADVISOR MODEL REQUEST with correct data
+* PUT ADVISOR MODEL REQUEST - udpate
+* PUT ADVISOR MODEL REQUEST with no advisor exist
+* PUT ADVISOR MODEL REQUEST with bad asset allocations
 
-The PUT call to add a model should be idempotent based on the model name.  Meaning that
-multiple calls with the same model name will not add additional models to the advisor but
-overwrite the existing model with that name.
-Models with a different name should be added to the list of models for that advisor.
-
-Add validation to make sure the sum of the cash allocation percentage and all of the
-individual asset allocations percentage equals 100%.
-
-The GET call should return all models for the specified advisorId as well as support
-paging based on query parameters.
-
-Please include unit/integration tests.
-
-**Bonuses/for fun**:
-- Validate the request and response from your implementation match the RAML specification.
-- Add authentication/authorization so that a logged in advisor has access to only their
-own models.
+```
