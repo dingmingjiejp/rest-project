@@ -1,11 +1,8 @@
 package com.trizic.restapi.controller;
 
-import com.trizic.restapi.Exception.AdvisorNotFoundException;
-import com.trizic.restapi.Exception.AllocationPercentageTotalInvalidException;
 import com.trizic.restapi.model.Model;
 import com.trizic.restapi.service.ModelService;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
