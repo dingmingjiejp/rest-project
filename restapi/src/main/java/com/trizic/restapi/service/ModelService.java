@@ -1,6 +1,8 @@
 package com.trizic.restapi.service;
 
 
+import com.trizic.restapi.Exception.AdvisorNotFoundException;
+import com.trizic.restapi.Exception.AllocationPercentageTotalInvalidException;
 import com.trizic.restapi.model.Advisor;
 import com.trizic.restapi.model.Model;
 import com.trizic.restapi.model.PageList;
@@ -34,6 +36,16 @@ public class ModelService {
    * @return Model
    */
   public Model saveModel(Model model, String advisorId) {
+
+    if (!findAdvisorById(advisorId).isPresent()) {
+      throw new AdvisorNotFoundException();
+    }
+
+    Double totalPercent =  model.getAssetAllocations().stream().mapToDouble(assetAllocation -> assetAllocation.getPercentage()).sum();
+    if (!totalPercent.equals(100D)) {
+      throw new AllocationPercentageTotalInvalidException();
+    }
+
     model.setAdvisorId(advisorId);
 
     Optional<Model> m = modelRepository.findByAdvisorIdName(advisorId, model.getName());
@@ -51,6 +63,10 @@ public class ModelService {
    * @return PageList
    */
   public PageList<Model> findPageModelsByAdvisorId(String advisorId, PageRequest page) {
+
+    if (!findAdvisorById(advisorId).isPresent()) {
+      throw new AdvisorNotFoundException();
+    }
 
     Page<Model> pageModel = modelRepository.findPagedModelsByAdvisorIdOrderById(advisorId, page);
 

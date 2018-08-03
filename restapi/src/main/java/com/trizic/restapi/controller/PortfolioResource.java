@@ -38,15 +38,6 @@ public class PortfolioResource {
   @RequestMapping(method = RequestMethod.PUT)
   public ResponseEntity<Object> putMode(@PathVariable("advisorId") String id, @Valid @RequestBody Model model) {
 
-    if (!modelService.findAdvisorById(id).isPresent()) {
-      throw new AdvisorNotFoundException();
-    }
-
-    Double totalPercent =  model.getAssetAllocations().stream().mapToDouble(assetAllocation -> assetAllocation.getPercentage()).sum();
-    if (!totalPercent.equals(100D)) {
-      throw new AllocationPercentageTotalInvalidException();
-    }
-
     return new ResponseEntity<>(modelService.saveModel(model, id), HttpStatus.OK);
   }
 
@@ -64,7 +55,7 @@ public class PortfolioResource {
       @RequestParam("pageSize") Optional<Integer> pageSize) {
 
     PageRequest request = PageRequest.of(pageNumber.orElse(0), pageSize.orElse(20));
-    return new ResponseEntity<Object> (modelService.findPageModelsByAdvisorId(id, request), HttpStatus.OK);
+    return new ResponseEntity<> (modelService.findPageModelsByAdvisorId(id, request), HttpStatus.OK);
   }
 
 

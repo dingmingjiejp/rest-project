@@ -4,7 +4,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.*;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
+import com.trizic.restapi.Exception.AdvisorNotFoundException;
+import com.trizic.restapi.Exception.AllocationPercentageTotalInvalidException;
 import com.trizic.restapi.model.Advisor;
 import com.trizic.restapi.model.AssetAllocation;
 import com.trizic.restapi.model.Model;
@@ -30,32 +31,71 @@ public class ModelServiceTest {
 
 
   @Test
-  public void testFindAdvisorById() {
+  public void testFindAdvisorByIdAdvisorIdExist() {
     // testcase 1 : advisorId exist
     Optional<Advisor> advisor = modelService.findAdvisorById("test");
     assertThat(advisor.isPresent(), is(true));
     assertThat(advisor.get().getId(), is("test"));
     assertThat(advisor.get().getName(), is("test"));
 
+  }
+
+  @Test
+  public void testFindAdvisorByIdAdvisorIdNotExist() {
     // testcase 2 : advisorId not exist
-    advisor = modelService.findAdvisorById("notExist");
+    Optional<Advisor> advisor = modelService.findAdvisorById("notExist");
     assertThat(advisor.isPresent(), is(false));
 
   }
 
   @Test
-  public void testSaveModel() {
+  public void testSaveModelCreateNewWithExistAdvisorId() {
 
     // testcase 1 : create new model
-    Model model = Model.of(null, "test", "test", "test", 10, 10, ModelType.QUALIFIED,
+    Model model = Model.of(null, "0002", "test", "test", 10, 10, ModelType.QUALIFIED,
         RebalanceFrequency.ANNUAL, null
     );
 
     List<AssetAllocation> list = new ArrayList<>();
-    list.add(AssetAllocation.of(null, "test1", 10D));
+    list.add(AssetAllocation.of(null, "test1", 100D));
     model.setAssetAllocations(list);
 
-    Model modelReal = modelService.saveModel(model, "test");
+    Model modelReal = modelService.saveModel(model, "0002");
+    assertThat(modelReal, notNullValue());
+    assertThat(modelReal.getId(), notNullValue());
+    assertModel(modelReal, model);
+
+  }
+
+  @Test(expected = AdvisorNotFoundException.class)
+  public void testSaveModelCreateNewWithNotExistAdvisorId() {
+
+    // testcase 2 : create new model
+    Model model = Model.of(null, "notExist", "test", "test", 10, 10, ModelType.QUALIFIED,
+        RebalanceFrequency.ANNUAL, null
+    );
+
+    List<AssetAllocation> list = new ArrayList<>();
+    list.add(AssetAllocation.of(null, "test1", 100D));
+    model.setAssetAllocations(list);
+
+    modelService.saveModel(model, "notExist");
+
+  }
+
+
+  @Test
+  public void testSaveModelUpdateExistedModel() {
+
+    Model model = Model.of(null, "0002", "test", "test", 10, 10, ModelType.QUALIFIED,
+        RebalanceFrequency.ANNUAL, null
+    );
+
+    List<AssetAllocation> list = new ArrayList<>();
+    list.add(AssetAllocation.of(null, "test1", 100D));
+    model.setAssetAllocations(list);
+
+    Model modelReal = modelService.saveModel(model, "0002");
     assertThat(modelReal, notNullValue());
     assertThat(modelReal.getId(), notNullValue());
     assertModel(modelReal, model);
@@ -66,15 +106,15 @@ public class ModelServiceTest {
     modelReal.setRebalanceFrequency(RebalanceFrequency.MONTHLY);
     modelReal.setModelType(ModelType.TAXABLE);
     modelReal.setDriftPercentage(50);
-    modelReal.getAssetAllocations().get(0).setSymbol("Test");
-    modelReal.getAssetAllocations().get(0).setPercentage(10D);
+    modelReal.getAssetAllocations().get(0).setSymbol("test2");
+    modelReal.getAssetAllocations().get(0).setPercentage(100D);
 
-    Model modelReal2 = modelService.saveModel(modelReal, "test");
+    Model modelReal2 = modelService.saveModel(modelReal, "0002");
     assertModel(modelReal2, modelReal);
 
     // testcase 3 : search test
     PageList<Model> pageList = modelService
-        .findPageModelsByAdvisorId("test", PageRequest.of(0, 20));
+        .findPageModelsByAdvisorId("0002", PageRequest.of(0, 20));
 
     Model modelS = null;
     for (Model m : pageList.getPage()) {
@@ -85,10 +125,26 @@ public class ModelServiceTest {
 
     assertThat(modelS, notNullValue());
     assertModel(modelS, modelReal2);
+
+  }
+
+
+  @Test(expected = AllocationPercentageTotalInvalidException.class)
+  public void testSaveModelWithAllocationInvalid() {
+
+    Model model = Model.of(null, "test", "test", "test", 10, 10, ModelType.QUALIFIED,
+        RebalanceFrequency.ANNUAL, null
+    );
+
+    List<AssetAllocation> list = new ArrayList<>();
+    list.add(AssetAllocation.of(null, "test1", 10D));
+    model.setAssetAllocations(list);
+
+    modelService.saveModel(model, "test");
   }
 
   @Test
-  public void testFindPageModelsByAdvisorId() {
+  public void testFindPageModelsByAdvisorIdWithAdvisorIdExisting() {
 
     //testcase 1 : search all data
     PageList<Model> pageList = modelService
@@ -111,6 +167,44 @@ public class ModelServiceTest {
     assertThat(pageList1.getPage().get(0).getId(), is(99991L));
     assertThat(pageList1.getPage().get(1).getId(), is(99992L));
     assertThat(pageList2.getPage().get(0).getId(), is(99993L));
+
+  }
+
+  @Test
+  public void testFindPageModelsByAdvisorIdOnePage() {
+
+    PageList<Model> pageList = modelService
+        .findPageModelsByAdvisorId("test", PageRequest.of(0, 20));
+
+    assertThat(pageList.getNumberOfPages(), is(1));
+    assertThat(pageList.getPageNumber(), is(0));
+    assertThat(pageList.getPageSize(), is(20));
+    assertThat(pageList.getTotalNumberOfElements(), is(3L));
+
+  }
+
+  @Test
+  public void testFindPageModelsByAdvisorIdTwoPages() {
+
+    //testcase 2 : paging test
+    PageList<Model> pageList1 = modelService
+        .findPageModelsByAdvisorId("test", PageRequest.of(0, 2));
+    PageList<Model> pageList2 = modelService
+        .findPageModelsByAdvisorId("test", PageRequest.of(1, 2));
+
+    assertThat(pageList1.getPage().size(), is(2));
+    assertThat(pageList2.getPage().size(), is(1));
+
+    assertThat(pageList1.getPage().get(0).getId(), is(99991L));
+    assertThat(pageList1.getPage().get(1).getId(), is(99992L));
+    assertThat(pageList2.getPage().get(0).getId(), is(99993L));
+
+  }
+
+  @Test(expected = AdvisorNotFoundException.class)
+  public void testFindPageModelsByAdvisorIdWithAdvisorIdNotExisted() {
+
+    modelService.findPageModelsByAdvisorId("NotExisted", PageRequest.of(0, 20));
 
   }
 
