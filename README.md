@@ -32,14 +32,14 @@ Test Case:
 
 ## Integrition Tests:
 Used curl/postman to send restful request and verified the reponse.
-Test commands and responses could be found in restapi/it
+Test commands and responses evidences could be found in restapi/it
 
 test case
 * GET ADVISOR MODEL REQUEST with default page number and size
 * GET ADVISOR MODEL REQUEST with customized page number and size
 * PUT ADVISOR MODEL REQUEST with correct data
-* PUT ADVISOR MODEL REQUEST - udpate
-* PUT ADVISOR MODEL REQUEST with no advisor exist
+* PUT ADVISOR MODEL REQUEST with udpating existed model
+* PUT ADVISOR MODEL REQUEST with no advisor existed
 * PUT ADVISOR MODEL REQUEST with bad asset allocations
 
 ```
